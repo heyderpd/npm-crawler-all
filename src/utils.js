@@ -12,7 +12,8 @@ export const getDomain = (url, Throw = true) => {
 }
 
 export const time = base => {
-  base = base > 600 ? base : 600
+  const ref = 900
+  base = base > ref ? base : ref
   const n = base + Math.floor(Math.random() *base)
   console.log('time base:', n)
   return n

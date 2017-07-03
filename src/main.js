@@ -1,6 +1,7 @@
 import fs from 'fs'
 import { mapx } from 'pytils'
 import { getDomain, getContext, getProp, delay, time } from './utils'
+import { getHash } from 'dejavu-call'
 
 let data = {}
 
@@ -21,7 +22,8 @@ const resetData = (url, instructions) => {
 const tryPages = async (url, deep) => {
   try {
     deep -= 1
-    const { links, context } = await getContext(url, data.instructions)
+    const { html, links, context } = await getContext(url, data.instructions)
+    console.log('--desc: ', context)
     data.pages[url] = context
     if (deep > 0) {
       if (links && links.length) {
@@ -46,6 +48,7 @@ const feedList = async (url, deep) => {
       deep
     })
   }
+  console.log('--feedList', url, deep, data.feed)
 }
 
 const consumeList = resolve => () => {
@@ -64,6 +67,7 @@ export const start = (url, instructions) => new Promise(
   (resolve, reject) => {
     resetData(url, instructions)
     feedList(url, data.deep)
+    console.log('--Promise')
     data.interval = setInterval(
       consumeList(resolve),
       data.time)
@@ -72,7 +76,7 @@ export const start = (url, instructions) => new Promise(
 const getResume = () => {
   return mapx(
     data.pages,
-    (val, key) => 
+    (val, key) =>
       val.video ? val : undefined)
       .filter(Boolean)
 }
